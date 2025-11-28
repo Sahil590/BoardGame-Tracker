@@ -10,7 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +27,7 @@ SECRET_KEY = 'django-insecure-^m*_#vgmv%#lw&ebxc6eij7c7d!^!a=ooga3&jt86*wl4$ooud
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.vercel.app', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -89,6 +91,14 @@ DATABASES = {
     }
 }
 
+# Vercel Postgres uses POSTGRES_URL
+if 'POSTGRES_URL' in os.environ:
+    os.environ['DATABASE_URL'] = os.environ['POSTGRES_URL'].replace('postgres://', 'postgresql://')
+
+DATABASES['default'] = dj_database_url.config(
+    default='sqlite:///' + str(BASE_DIR / 'db.sqlite3')
+)
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -130,4 +140,3 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-ALLOWED_HOSTS = ['.vercel.app', 'now.sh', 'localhost', '127.0.0.1']
